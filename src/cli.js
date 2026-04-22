@@ -10,6 +10,7 @@ Usage: vtl-lint [options] <glob patterns...>
 
 Options:
   --fix              Automatically fix fixable problems
+  --fix-dry-run      Show what would be fixed without writing changes
   --config <path>    Path to config file (default: .vtllintrc.json)
   --quiet            Only report errors, not warnings
   --no-color         Disable colored output
@@ -27,6 +28,7 @@ function parseArgs(argv) {
   const args = {
     patterns: [],
     fix: false,
+    fixDryRun: false,
     configPath: null,
     quiet: false,
     color: true,
@@ -40,6 +42,9 @@ function parseArgs(argv) {
     switch (arg) {
       case '--fix':
         args.fix = true;
+        break;
+      case '--fix-dry-run':
+        args.fixDryRun = true;
         break;
       case '--config':
         args.configPath = argv[++i];
@@ -114,6 +119,10 @@ async function cli(argv) {
   if (args.fix) {
     config.fix = true;
   }
+  if (args.fixDryRun) {
+    config.fixDryRun = true;
+    config.fix = false; // dry-run takes precedence
+  }
 
   // Run linter
   const results = await lintFiles(files, config);
@@ -122,6 +131,7 @@ async function cli(argv) {
   const { errorCount, warningCount } = report(results, {
     quiet: args.quiet,
     color: args.color,
+    dryRun: args.fixDryRun,
   });
 
   if (errorCount > 0) return 1;

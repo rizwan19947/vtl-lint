@@ -42,7 +42,10 @@ function lintSource(source, config) {
 
 /**
  * Lint an array of file paths.
- * Returns array of { filePath, diagnostics, source }.
+ * Returns array of { filePath, diagnostics, fixed, fixCount }.
+ *
+ * config.fix = true   — apply fixes and write files
+ * config.fixDryRun = true — compute fixes but don't write (still reports what would change)
  */
 async function lintFiles(files, config) {
   const results = [];
@@ -62,27 +65,37 @@ async function lintFiles(files, config) {
           column: 0,
           fix: null,
         }],
+        fixed: false,
+        fixCount: 0,
       });
       continue;
     }
 
     const diagnostics = lintSource(source, config);
 
-    // Apply fixes if enabled
-    if (config.fix) {
+    // Apply fixes if enabled (or dry-run)
+    if (config.fix || config.fixDryRun) {
       const fixable = diagnostics.filter((d) => d.fix !== null);
       if (fixable.length > 0) {
-        const fixed = applyFixes(source, fixable.map((d) => d.fix));
-        fs.writeFileSync(filePath, fixed, 'utf-8');
+        const { output, fixCount } = applyFixes(source, fixable.map((d) => d.fix));
 
-        // Re-lint after fixing to get remaining issues
-        const remaining = lintSource(fixed, config);
-        results.push({ filePath, diagnostics: remaining });
+        if (config.fix) {
+          fs.writeFileSync(filePath, output, 'utf-8');
+        }
+
+        // Re-lint the fixed content to get remaining issues
+        const remaining = lintSource(output, config);
+        results.push({
+          filePath,
+          diagnostics: remaining,
+          fixed: true,
+          fixCount,
+        });
         continue;
       }
     }
 
-    results.push({ filePath, diagnostics });
+    results.push({ filePath, diagnostics, fixed: false, fixCount: 0 });
   }
 
   return results;
