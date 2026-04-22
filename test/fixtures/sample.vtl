@@ -1,0 +1,12 @@
+#set($greeting = "Hello World")
+#if($greeting)
+  <h1>$greeting</h1>
+  #foreach($item in $items)
+    <p>$item.name</p>
+  #end
+#else
+  <h1>No greeting</h1>
+#end
+
+## This is a comment
+$dotcontent.pull("+contentType:Blog", 10, "modDate desc")
