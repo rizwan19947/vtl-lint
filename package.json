@@ -7,7 +7,7 @@
     "vtl-lint": "./bin/vtl-lint.js"
   },
   "scripts": {
-    "test": "node --test test/**/*.test.js",
+    "test": "node --test test/*.test.js",
     "lint": "node bin/vtl-lint.js"
   },
   "keywords": [
