@@ -1,0 +1,18 @@
+#set($my_greeting = "Hello World")
+#set($PageTitle = "Test")
+
+#if($my_greeting)
+  <h1>$my_greeting</h1>
+  #foreach($item in $items)
+    <p>$item.name</p>
+    <span>$unknownTool.doSomething()</span>
+  #end
+#else
+  <h1>No greeting</h1>
+
+
+
+#end
+
+<p>$dotcontent.pull("+contentType:Blog", 10, "modDate desc")</p>
+<footer>$velutil.getRandomNumber()</footer>

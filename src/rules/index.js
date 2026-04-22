@@ -17,8 +17,14 @@ function getRules() {
   return rules;
 }
 
-// Rules will be registered here as they are implemented in Phase 2.
-// Example:
-// registerRule('no-trailing-whitespace', require('./no-trailing-whitespace'));
+registerRule('no-trailing-whitespace', require('./no-trailing-whitespace'));
+registerRule('indent', require('./indent'));
+registerRule('max-line-length', require('./max-line-length'));
+registerRule('no-multiple-blank-lines', require('./no-multiple-blank-lines'));
+registerRule('eol-last', require('./eol-last'));
+registerRule('silent-reference', require('./silent-reference'));
+registerRule('variable-naming', require('./variable-naming'));
+registerRule('block-matching', require('./block-matching'));
+registerRule('known-viewtools', require('./known-viewtools'));
 
 module.exports = { registerRule, getRules };
